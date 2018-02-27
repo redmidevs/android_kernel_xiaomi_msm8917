@@ -842,8 +842,12 @@ config MSM_REMOTEQDSS
 	  enable/disable these events. Interface located in
 	  /sys/class/remoteqdss.
 
+config SERIAL_NUM
+	bool "Enable Serial Number Proc Interface"
+	help
+	  Provide a interface for reading CPU serial number
+
 config QSEE_IPC_IRQ_BRIDGE
-	tristate "QSEE IPC Interrupt Bridge"
 	help
 	  This module enables bridging an Inter-Processor Communication(IPC)
 	  interrupt from a remote subsystem directed towards Qualcomm
