@@ -29,6 +29,13 @@ config SMB358_CHARGER
 	  The driver reports the charger status via the power supply framework.
 	  A charger status change triggers an IRQ via the device STAT pin.
 
+config C3N_SMB358
+	bool "to seperate different projects"
+	default n
+	help
+	  Say Y here to enable a function which disabled TEMP protect...
+	  WARNNING:Only SCM could open it.
+
 config SMB135X_CHARGER
 	tristate "SMB135X Battery Charger"
 	depends on I2C
