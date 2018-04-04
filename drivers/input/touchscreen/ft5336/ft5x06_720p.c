@@ -155,22 +155,22 @@ static const struct file_operations ctp_color_procs_fops = {
 
 #define PROC_NAME	"ft5x0x-debug"
 static unsigned char proc_operate_mode = PROC_RAWDATA;
-static struct proc_dir_entry *ft5x0x_proc_entry
+static struct proc_dir_entry *ft5x0x_proc_entry;
 #endif
 
-static u8 is_ic_update_crash
-static struct i2c_client *update_client
+static u8 is_ic_update_crash;
+static struct i2c_client *update_client;
 
 #if CTP_CHARGER_DETECT
 extern int power_supply_get_battery_charge_state(struct power_supply *psy);
-static struct power_supply		*batt_psy
-static u8 is_charger_plug
-static u8 pre_charger_status
+static struct power_supply		*batt_psy;
+static u8 is_charger_plug;
+static u8 pre_charger_status;
 
 #endif
 
 #if CTP_PROC_INTERFACE
-static struct i2c_client *g_focalclient
+static struct i2c_client *g_focalclient;
 #endif
 
 #if CTP_PROC_INTERFACE
