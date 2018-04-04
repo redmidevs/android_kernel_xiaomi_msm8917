@@ -1,4 +1,5 @@
 /* Copyright (c) 2011-2018, The Linux Foundation. All rights reserved.
+ * Copyright (C) 2018 XiaoMi, Inc.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -844,27 +845,37 @@ static int32_t msm_actuator_park_lens(struct msm_actuator_ctrl_t *a_ctrl)
 	next_lens_pos = a_ctrl->step_position_table[a_ctrl->curr_step_pos];
 	while (next_lens_pos) {
 		/* conditions which help to reduce park lens time */
-		if (next_lens_pos > (a_ctrl->park_lens.max_step *
-			PARK_LENS_LONG_STEP)) {
-			next_lens_pos = next_lens_pos -
-				(a_ctrl->park_lens.max_step *
-				PARK_LENS_LONG_STEP);
-		} else if (next_lens_pos > (a_ctrl->park_lens.max_step *
-			PARK_LENS_MID_STEP)) {
-			next_lens_pos = next_lens_pos -
-				(a_ctrl->park_lens.max_step *
-				PARK_LENS_MID_STEP);
-		} else if (next_lens_pos > (a_ctrl->park_lens.max_step *
-			PARK_LENS_SMALL_STEP)) {
-			next_lens_pos = next_lens_pos -
-				(a_ctrl->park_lens.max_step *
-				PARK_LENS_SMALL_STEP);
-		} else {
-			next_lens_pos = (next_lens_pos >
-				a_ctrl->park_lens.max_step) ?
-				(next_lens_pos - a_ctrl->park_lens.
-				max_step) : 0;
-		}
+		#if defined(CONFIG_D1_ROSY)
+			if (next_lens_pos > 400) {
+					next_lens_pos = 400;
+				} else if (next_lens_pos > 25) {
+					next_lens_pos = next_lens_pos - 25;
+				} else{
+					next_lens_pos = 0;
+				}
+		#else
+			if (next_lens_pos > (a_ctrl->park_lens.max_step *
+				PARK_LENS_LONG_STEP)) {
+				next_lens_pos = next_lens_pos -
+					(a_ctrl->park_lens.max_step *
+					PARK_LENS_LONG_STEP);
+			} else if (next_lens_pos > (a_ctrl->park_lens.max_step *
+				PARK_LENS_MID_STEP)) {
+				next_lens_pos = next_lens_pos -
+					(a_ctrl->park_lens.max_step *
+					PARK_LENS_MID_STEP);
+			} else if (next_lens_pos > (a_ctrl->park_lens.max_step *
+				PARK_LENS_SMALL_STEP)) {
+				next_lens_pos = next_lens_pos -
+					(a_ctrl->park_lens.max_step *
+					PARK_LENS_SMALL_STEP);
+			} else {
+				next_lens_pos = (next_lens_pos >
+					a_ctrl->park_lens.max_step) ?
+					(next_lens_pos - a_ctrl->park_lens.
+					max_step) : 0;
+			}
+		#endif
 		a_ctrl->func_tbl->actuator_parse_i2c_params(a_ctrl,
 			next_lens_pos, a_ctrl->park_lens.hw_params,
 			a_ctrl->park_lens.damping_delay);
@@ -883,7 +894,11 @@ static int32_t msm_actuator_park_lens(struct msm_actuator_ctrl_t *a_ctrl)
 		}
 		a_ctrl->i2c_tbl_index = 0;
 		/* Use typical damping time delay to avoid tick sound */
-		usleep_range(10000, 12000);
+		#if defined(CONFIG_D1_ROSY)
+			usleep_range(13000, 14000);
+		#else
+			usleep_range(10000, 12000);
+		#endif
 	}
 
 	return 0;
