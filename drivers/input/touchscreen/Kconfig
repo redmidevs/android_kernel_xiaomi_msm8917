@@ -1152,12 +1152,6 @@ config TOUCHSCREEN_FT5346
 
 source "drivers/input/touchscreen/FT5346/Kconfig"
 
-config TOUCHSCREEN_GT915L
-	tristate "GT915L touchscreens"
-	depends on I2C
-
-source "drivers/input/touchscreen/GT915L/Kconfig"
-
 config TOUCHSCREEN_GT917D
 	tristate "GT917D touchscreens"
 	depends on I2C
