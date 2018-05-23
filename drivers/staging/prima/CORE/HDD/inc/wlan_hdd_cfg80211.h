@@ -100,6 +100,13 @@
 #endif
 #endif
 
+/*
+ * Max number of supported csa_counters in beacons
+ * and probe responses. Set to the same value as
+ * IEEE80211_MAX_CSA_COUNTERS_NUM
+ */
+#define WLAN_HDD_MAX_NUM_CSA_COUNTERS 2
+
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 12, 0)) \
 	|| defined(BACKPORTED_CHANNEL_SWITCH_PRESENT)
 #define CHANNEL_SWITCH_SUPPORTED
@@ -121,6 +128,9 @@
 #define NUM_RADIOS  0x1
 #endif /* WLAN_FEATURE_LINK_LAYER_STATS */
 
+#define WOWL_PTRN_MAX_SIZE          128
+#define WOWL_PTRN_MASK_MAX_SIZE      16
+#define WOWL_MAX_PTRNS_ALLOWED       16
 
 typedef struct {
    u8 element_id;
@@ -1407,6 +1417,9 @@ enum qca_wlan_vendor_config {
     QCA_WLAN_VENDOR_ATTR_CONFIG_FINE_TIME_MEASUREMENT,
     QCA_WLAN_VENDOR_ATTR_CONFIG_TX_RATE,
     QCA_WLAN_VENDOR_ATTR_CONFIG_PENALIZE_AFTER_NCONS_BEACON_MISS,
+
+    /* 8-bit unsigned value to trigger QPower: 1-Enable, 0-Disable */
+    QCA_WLAN_VENDOR_ATTR_CONFIG_QPOWER = 25,
     /* 8-bit unsigned value to set the beacon miss threshold in 2.4 GHz */
     QCA_WLAN_VENDOR_ATTR_CONFIG_BEACON_MISS_THRESHOLD_24 = 37,
     /* 8-bit unsigned value to set the beacon miss threshold in 5 GHz */
@@ -1654,6 +1667,15 @@ extern void wlan_hdd_cfg80211_update_replayCounterCallback(void *callbackContext
 #endif
 void* wlan_hdd_change_country_code_cb(void *pAdapter);
 void hdd_select_cbmode( hdd_adapter_t *pAdapter,v_U8_t operationChannel);
+
+/*
+ * wlan_hdd_restore_channels() Restore the channels which were cached
+ * and disabled in __wlan_hdd_disable_channels api.
+ * @hdd_ctx: Pointer to the HDD context
+ *
+ * @Return: 0 on success, Error code on failure
+ */
+int wlan_hdd_restore_channels(hdd_context_t *pHddCtx);
 
 /*
  * hdd_update_indoor_channel() - enable/disable indoor channel

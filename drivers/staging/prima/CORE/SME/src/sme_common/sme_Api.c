@@ -901,6 +901,68 @@ static void smeProcessNanReq(tpAniSirGlobal pMac, tSmeCmd *pCommand )
     }
 }
 
+/**
+ * sme_set_qpower() - Set Qpower
+ * @pMac - context handler
+ * @enable - uint8 value that needs to be sent to FW
+ *
+ * The function sends the qpower to firmware received
+ * via driver command
+ */
+void sme_set_qpower(tpAniSirGlobal pMac, uint8_t enable)
+{
+    tSirMsgQ msgQ;
+    tSirRetStatus retCode = eSIR_SUCCESS;
+
+    vos_mem_zero(&msgQ, sizeof(tSirMsgQ));
+    msgQ.type = WDA_QPOWER;
+    msgQ.reserved = 0;
+    msgQ.bodyval = enable;
+
+    retCode = wdaPostCtrlMsg(pMac, &msgQ);
+    if(eSIR_SUCCESS != retCode)
+    {
+        smsLog(pMac, LOGE,
+           FL("Posting WDA_QPOWER to WDA failed, reason=%X"),
+           retCode);
+    }
+    else
+    {
+        smsLog(pMac, LOG1, FL("posted WDA_QPOWER command"));
+    }
+}
+
+/**
+ * sme_set_vowifi_mode() - Set VOWIFI mode
+ * @pMac - context handler
+ * @enable - boolean value that determines the state
+ *
+ * The function sends the VOWIFI to firmware received
+ * via driver command
+ */
+void sme_set_vowifi_mode(tpAniSirGlobal pMac, bool enable)
+{
+    tSirMsgQ msgQ;
+    tSirRetStatus retCode = eSIR_SUCCESS;
+
+    vos_mem_zero(&msgQ, sizeof(tSirMsgQ));
+    msgQ.type = WDA_VOWIFI_MODE;
+    msgQ.reserved = 0;
+    msgQ.bodyval = enable;
+
+    retCode = wdaPostCtrlMsg(pMac, &msgQ);
+    if(eSIR_SUCCESS != retCode)
+    {
+        smsLog(pMac, LOGE,
+           FL("Posting WDA_VOWIFI_MODE to WDA failed, reason=%X"),
+           retCode);
+    }
+    else
+    {
+        smsLog(pMac, LOG1, FL("posted WDA_VOWIFI_MODE command"));
+    }
+}
+
 tANI_BOOLEAN smeProcessCommand( tpAniSirGlobal pMac )
 {
     tANI_BOOLEAN fContinue = eANI_BOOLEAN_FALSE;
@@ -14230,7 +14292,7 @@ tANI_BOOLEAN sme_handleSetFccChannel(tHalHandle hHal, tANI_U8 fcc_constraint,
             pMac->scan.defer_update_channel_list = true;
         } else {
             /* update the channel list to the firmware */
-            csrUpdateChannelList(pMac);
+            csrUpdateFCCChannelList(pMac);
         }
     }
 
@@ -15243,4 +15305,11 @@ sme_get_connect_strt_time(tHalHandle hal, uint8_t session_id)
    }
    session = CSR_GET_SESSION(mac_ctx, session_id);
    return session->connect_req_start_time;
+}
+
+void sme_request_imps(tHalHandle hal)
+{
+   tpAniSirGlobal mac_ctx = PMAC_STRUCT(hal);
+
+   csrScanStartIdleScan(mac_ctx);
 }
