@@ -48,4 +48,13 @@ source "drivers/staging/android/fiq_debugger/Kconfig"
 
 endif # if ANDROID
 
+config ANDROID_TIMED_OUTPUT
+	bool "Timed output class driver"
+	default y
+
+config ANDROID_TIMED_GPIO
+	tristate "Android timed gpio driver"
+	depends on GENERIC_GPIO && ANDROID_TIMED_OUTPUT
+	default n
+
 endmenu
