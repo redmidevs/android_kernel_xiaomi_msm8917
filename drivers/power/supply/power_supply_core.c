@@ -59,7 +59,8 @@ static bool __power_supply_is_supplied_by(struct power_supply *supplier,
 	return false;
 }
 
-int power_supply_get_battery_charge_state(struct power_supply *psy)
+int power_supply_get_battery_charge_state(struct power_supply *psy,
+					unsigned long *state)
 {
 	union power_supply_propval ret = {0,};
 
@@ -820,7 +821,7 @@ __power_supply_register(struct device *parent,
 			   &psy->deferred_register_work,
 			   POWER_SUPPLY_DEFERRED_REGISTER_TIME);
 
-	if (strcmp(psy->name, "battery") == 0) {
+	if (strcmp(desc->name, "battery") == 0) {
 		pr_err("battery powe supply creat attr file!!\n");
 	}
 
