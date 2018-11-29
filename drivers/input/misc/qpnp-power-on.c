@@ -822,15 +822,14 @@ int qpnp_pon_is_lpk(void)
 {
 	struct qpnp_pon *pon = sys_reset_dev;
 	int rc;
-	u8 reg = 0;
+	int reg = 0;
 
 	if (!pon)
 		return 0;
 
-	rc = spmi_ext_register_readl(pon->spmi->ctrl, pon->spmi->sid,
-			QPNP_POFF_REASON1(pon), &reg, 1);
+	rc = regmap_read(pon->regmap, QPNP_POFF_REASON1(pon), &reg);
 	if (rc) {
-		dev_err(&pon->spmi->dev,
+		dev_err(&pon->pdev->dev,
 				"Unable to read addr=%x, rc(%d)\n",
 				QPNP_POFF_REASON1(pon), rc);
 		return 0;
@@ -840,14 +839,13 @@ int qpnp_pon_is_lpk(void)
 	if (reg & 0x80)
 		return 1;
 
-	dev_info(&pon->spmi->dev,
+	dev_info(&pon->pdev->dev,
 			"hw_reset reason1 is 0x%x\n",
 			reg);
 
-	rc = spmi_ext_register_readl(pon->spmi->ctrl, pon->spmi->sid,
-			QPNP_POFF_REASON2(pon), &reg, 1);
+	rc = regmap_read(pon->regmap, QPNP_POFF_REASON2(pon), &reg);
 
-	dev_info(&pon->spmi->dev,
+	dev_info(&pon->pdev->dev,
 			"hw_reset reason2 is 0x%x\n",
 			reg);
 
