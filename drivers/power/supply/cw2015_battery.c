@@ -68,7 +68,8 @@ struct cw_battery {
 
 	struct delayed_work bat_low_wakeup_work;
 	const struct cw_bat_platform_data *plat_data;
-	struct power_supply rk_bat;
+	struct power_supply *rk_bat;
+	struct power_supply_desc rk_bat_desc;
 	struct power_supply	*batt_psy;
 
 
@@ -1086,6 +1087,7 @@ static int cw_bat_probe(struct i2c_client *client, const struct i2c_device_id *i
 {
 	struct cw_bat_platform_data *pdata = client->dev.platform_data;
 	struct cw_battery *cw_bat;
+	struct power_supply_config bat_cfg = { .drv_data = cw_bat, };
 	int ret;
 	int loop = 0;
 
@@ -1159,14 +1161,14 @@ static int cw_bat_probe(struct i2c_client *client, const struct i2c_device_id *i
 			return ret;
 	}
 
-	cw_bat->rk_bat.name = "rk-bat";
-	cw_bat->rk_bat.type = POWER_SUPPLY_TYPE_BATTERY;
-	cw_bat->rk_bat.properties = rk_battery_properties;
-	cw_bat->rk_bat.num_properties = ARRAY_SIZE(rk_battery_properties);
-	cw_bat->rk_bat.get_property = rk_battery_get_property;
-	ret = power_supply_register(&client->dev, &cw_bat->rk_bat);
-	if (ret < 0) {
-		dev_err(&cw_bat->client->dev, "power supply register rk_bat error\n");
+	cw_bat->rk_bat_desc.name = "rk-bat";
+	cw_bat->rk_bat_desc.type = POWER_SUPPLY_TYPE_BATTERY;
+	cw_bat->rk_bat_desc.properties = rk_battery_properties;
+	cw_bat->rk_bat_desc.num_properties = ARRAY_SIZE(rk_battery_properties);
+	cw_bat->rk_bat_desc.get_property = rk_battery_get_property;
+	cw_bat->rk_bat = power_supply_register(cw_bat->dev,
+			&cw_bat->rk_bat_desc, &bat_cfg);
+	if (IS_ERR(cw_bat->rk_bat)) {
 		pr_debug("rk_bat_register_fail\n");
 		goto rk_bat_register_fail;
 	}
@@ -1248,7 +1250,7 @@ static int cw_bat_probe(struct i2c_client *client, const struct i2c_device_id *i
 
 rk_bat_register_fail:
 	pr_debug("cw2015/cw2013 driver v1.2 probe error!!!!\n");
-	return ret;
+	return cw_bat->rk_bat;
 }
 
 static int cw_bat_remove(struct i2c_client *client)
