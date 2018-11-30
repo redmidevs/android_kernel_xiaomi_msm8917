@@ -747,7 +747,6 @@ __power_supply_register(struct device *parent,
 	struct device *dev;
 	struct power_supply *psy;
 	int rc;
-	int ret_device_file = 0;
 
 	if (!parent)
 		pr_warn("%s: Expected proper parent device for '%s'\n",
