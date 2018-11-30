@@ -713,7 +713,7 @@ static void rk_bat_update_status(struct cw_battery *cw_bat)
 		cw_bat->batt_psy = power_supply_get_by_name("battery");
 	if (cw_bat->batt_psy) {
 		/* if battery has been registered, use the status property */
-		cw_bat->batt_psy->get_property(cw_bat->batt_psy,
+		cw_bat->rk_bat_desc.get_property(cw_bat->batt_psy,
 					POWER_SUPPLY_PROP_STATUS, &ret);
 		status = ret.intval;
 	} else{
